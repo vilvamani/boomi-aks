@@ -1,0 +1,359 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deploymentPrefix": {
+      "defaultValue": "boomi",
+      "minLength": 3,
+      "maxLength": 8,
+      "type": "string",
+      "metadata": {
+        "description": "Name of the deployment prefix"
+      }
+    },
+    "publicSubnetRef": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the public subnet for virtual network"
+      }
+    },
+    "location": {
+      "defaultValue": "[resourceGroup().location]",
+      "type": "string",
+      "metadata": {
+        "description": "Location of Resources"
+      }
+    },
+    "adminUsername": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Default Admin username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Default Admin password"
+      }
+    },
+    "customData": {
+      "type": "string",
+      "defaultValue": "yum install git -y",
+      "metadata": {
+        "description": "String passed down to the Virtual Machine."
+      }
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2",
+      "allowedValues": [
+        "Standard_B1s",
+        "Standard_DS1_v2"
+      ],
+      "metadata": {
+        "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
+      }
+    },
+    "centOSVersion": {
+      "type": "string",
+      "defaultValue": "8_2",
+      "allowedValues": [
+        "8_2"
+      ],
+      "metadata": {
+        "description": "The CentOS version for the VM. This will pick a fully patched image of this given Ubuntu version."
+      }
+    },
+    "publicIPPrefixLength": {
+      "type": "int",
+      "defaultValue": 28,
+      "metadata": {
+        "description": "Length of public IP prefix."
+      },
+      "maxValue": 31,
+      "minValue": 28
+    },
+    "instanceCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of VM instances (100 or less)."
+      },
+      "maxValue": 100,
+      "minValue": 1
+    },
+    "autoScaleDefault": {
+      "type": "string",
+      "defaultValue": "1"
+    },
+    "autoScaleMin": {
+      "type": "string",
+      "defaultValue": "1"
+    },
+    "autoScaleMax": {
+      "type": "string",
+      "defaultValue": "5"
+    },
+    "scaleOutCPUPercentageThreshold": {
+      "type": "string",
+      "defaultValue": "75"
+    },
+    "scaleInCPUPercentageThreshold": {
+      "type": "string",
+      "defaultValue": "25"
+    },
+    "scaleInPolicy": {
+      "type": "object",
+      "defaultValue": {
+        "rules": [
+          "Default"
+        ]
+      }
+    },
+    "storageAccountName": {
+        "type": "string",
+        "defaultValue": "[concat('storage', uniqueString(resourceGroup().id))]",
+        "metadata": {
+            "description": "Specifies the name of the Azure Storage account."
+        }
+    },
+    "fileShareName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 63,
+      "defaultValue": "fileshare",
+      "metadata": {
+        "description": "Specifies the name of the File Share. File share names must be between 3 and 63 characters in length and use numbers, lower-case letters and dash (-) only."
+      }
+    },
+    "ServicePrincipalObjectID": {
+      "type": "securestring"
+    },
+    "ServicePrincipalAppID": {
+      "type": "securestring"
+    },
+    "ServicePrincipalSecret": {
+      "type": "securestring"
+    },
+    "AksClusterName": {
+      "type": "string"
+    },
+    "MoleculeUsername": {
+      "type": "securestring"
+    },
+    "MoleculePassword": {
+      "type": "securestring"
+    },
+    "MoleculeAccountID": {
+      "type": "securestring"
+    }
+  },
+  "variables": {
+    "k8sServiceIpName": "[concat(parameters('deploymentPrefix'), '-k8s-service-ip')]",
+    "publicIPPrefixName": "[concat(parameters('deploymentPrefix'), '-bastion-public-ip-prefix')]",
+    "nicName": "[concat(parameters('deploymentPrefix'), '-bastion-nic')]",
+    "virtualMachineScaleSetName": "[concat(parameters('deploymentPrefix'), '-bastion-vmss')]",
+    "vmssId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', concat(parameters('deploymentPrefix'), '-bastion-vmss'))]",
+    "autoScaleResourceName": "[concat(parameters('deploymentPrefix'), '-autoscale')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2019-11-01",
+      "name": "[variables('k8sServiceIpName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4
+      }
+    },
+    {
+      "name": "[variables('publicIPPrefixName')]",
+      "type": "Microsoft.Network/publicIPPrefixes",
+      "apiVersion": "2019-11-01",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "prefixLength": "[parameters('publicIPPrefixLength')]"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/autoscaleSettings",
+      "apiVersion": "2015-04-01",
+      "name": "[variables('autoScaleResourceName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('virtualMachineScaleSetName'))]"
+      ],
+      "properties": {
+        "name": "[variables('autoScaleResourceName')]",
+        "targetResourceUri": "[variables('vmssId')]",
+        "enabled": true,
+        "profiles": [
+          {
+            "name": "Profile1",
+            "capacity": {
+              "minimum": "[parameters('autoScaleMin')]",
+              "maximum": "[parameters('autoScaleMax')]",
+              "default": "[parameters('autoScaleDefault')]"
+            },
+            "rules": [
+              {
+                "metricTrigger": {
+                  "metricName": "Percentage CPU",
+                  "metricNamespace": "",
+                  "metricResourceUri": "[variables('vmssId')]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "[concat('PT', '10', 'M')]",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": "[parameters('scaleOutCPUPercentageThreshold')]"
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT1M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "Percentage CPU",
+                  "metricNamespace": "",
+                  "metricResourceUri": "[variables('vmssId')]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT5M",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": "[parameters('scaleInCPUPercentageThreshold')]"
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT1M"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('virtualMachineScaleSetName')]",
+      "type": "Microsoft.Compute/virtualMachineScaleSets",
+      "apiVersion": "2020-06-01",
+      "location": "[parameters('location')]",
+      "tags": {
+        "creationSource": "[concat(parameters('deploymentPrefix'), '-bastion-vmss')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPPrefixes', variables('publicIPPrefixName'))]"
+      ],
+      "sku": {
+        "name": "[parameters('virtualMachineSize')]",
+        "tier": "Standard",
+        "capacity": "[parameters('instanceCount')]"
+      },
+      "properties": {
+        "upgradePolicy": {
+          "mode": "Manual"
+        },
+        "virtualMachineProfile": {
+          "osProfile": {
+            "computerNamePrefix": "[variables('virtualMachineScaleSetName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]",
+            "customData": "[base64(parameters('customData'))]",
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": false,
+              "provisionVMAgent": true
+            }
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "OpenLogic",
+              "offer": "CentOS",
+              "sku": "[parameters('centOSVersion')]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "caching": "ReadWrite",
+              "createOption": "FromImage"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaceConfigurations": [
+              {
+                "name": "[variables('nicName')]",
+                "properties": {
+                  "primary": true,
+                  "enableAcceleratedNetworking": false,
+                  "ipConfigurations": [
+                    {
+                      "name": "ipconfig",
+                      "properties": {
+                        "subnet": {
+                          "id": "[parameters('publicSubnetRef')]"
+                        },
+                        "publicIPAddressConfiguration": {
+                          "name": "bastion-public-ipaddress",
+                          "properties": {
+                            "idleTimeoutInMinutes": 15,
+                            "publicIPPrefix": {
+                              "id": "[resourceId('Microsoft.Network/publicIPPrefixes', variables('publicIpPrefixName'))]"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "extensionProfile": {
+            "extensions": [
+              {
+                "name": "[concat(variables('virtualMachineScaleSetName'), '-installcustomscript')]",
+                "properties": {
+                  "publisher": "Microsoft.Azure.Extensions",
+                  "type": "CustomScript",
+                  "typeHandlerVersion": "2.0",
+                  "settings": {
+                    "fileUris": [
+                      "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/userdata-scripts/cuserdata.sh"
+                    ]
+                  },
+                  "protectedSettings": {
+                    "commandToExecute": "[concat('./cuserdata.sh', ' --app_id \"', parameters('ServicePrincipalAppID'), '\" --app_key \"', parameters('ServicePrincipalSecret'), '\" --tenant_id \"', parameters('ServicePrincipalObjectID'), '\" --resource_group \"', resourceGroup().name, '\" --aks_name \"', parameters('AksClusterName'), '\" --storage_acc_name \"', parameters('storageAccountName'), '\" --molecule_username \"', parameters('MoleculeUsername'), '\" --molecule_password \"', parameters('MoleculePassword'), '\" --molecule_account \"', parameters('MoleculeAccountID'), '\" --k8s_service_ip \"', reference(variables('k8sServiceIpName')).ipAddress, '\" --fileshare \"', parameters('fileShareName'), '\"')]"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "scaleInPolicy": "[parameters('scaleInPolicy')]"
+      }
+    }
+  ],
+  "outputs": {
+    "vmPublicIPAddress": {
+      "type": "string",
+      "value": "[reference(variables('publicIPPrefixName')).ipAddress]"
+    },
+    "k8sServiceIPAddress": {
+      "type": "string",
+      "value": "[reference(variables('k8sServiceIpName')).ipAddress]"
+    }
+  }
+}

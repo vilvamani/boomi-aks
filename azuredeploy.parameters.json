@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentPrefix": {
+            "value": "boomi"
+        },
+        "virtualNetworkAddressPrefixes": {
+            "value": "10.10.0.0/16"
+        },
+        "vmSubnetAddressPrefix":{
+            "value": "10.10.0.0/20"
+        },
+        "aksSubnetAddressPrefix": {
+            "value": "10.10.16.0/20"
+        },
+        "kubernetesVersion": {
+            "value": "1.18.14"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS1_v2"
+        }
+    }
+}

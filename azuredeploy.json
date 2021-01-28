@@ -1,0 +1,322 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deploymentPrefix": {
+      "defaultValue": "boomi",
+      "minLength": 3,
+      "maxLength": 8,
+      "type": "string",
+      "metadata": {
+        "description": "Name of the deployment prefix"
+      }
+    },
+    "location": {
+      "defaultValue": "[resourceGroup().location]",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the location of AKS cluster."
+      }
+    },
+    "virtualNetworkAddressPrefixes": {
+      "defaultValue": "10.10.0.0/16",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the address prefixes of the virtual network."
+      }
+    },
+    "vmSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.0/20",
+      "metadata": {
+        "description": "Specifies the address prefix of the subnet which contains the virtual machine."
+      }
+    },
+    "aksSubnetAddressPrefix": {
+      "defaultValue": "10.10.16.0/20",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the address prefix of the subnet hosting the system node pool of the AKS cluster."
+      }
+    },
+    "kubernetesVersion": {
+      "defaultValue": "1.18.14",
+      "type": "string",
+      "allowedValues": [
+        "1.18.14",
+        "1.18.8",
+        "1.17.3",
+        "1.17.11",
+        "1.16.15"
+      ],
+      "metadata": {
+        "description": "The version of Kubernetes."
+      }
+    },
+    "storageSKU": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "Storage Account type for the VM and VM diagnostic storage"
+      },
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Standard_ZRS",
+        "Premium_LRS",
+        "Premium_ZRS",
+        "Standard_GZRS",
+        "Standard_RAGZRS"
+      ]
+    },
+    "adminUsername": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Default Admin username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Default Admin password"
+      }
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS1_v2",
+      "allowedValues": [
+        "Standard_B1s",
+        "Standard_DS1_v2"
+      ],
+      "metadata": {
+        "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
+      }
+    },
+    "ServicePrincipalObjectID": {
+      "type": "securestring"
+    },
+    "ServicePrincipalAppID": {
+      "type": "securestring",
+    },
+    "ServicePrincipalSecret": {
+      "type": "securestring"
+    },
+    "MoleculeUsername": {
+      "type": "securestring"
+    },
+    "MoleculePassword": {
+      "type": "securestring"
+    },
+    "MoleculeAccountID": {
+      "type": "securestring"
+    }
+  },
+  "variables": {
+    "vnetTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-vnet.json",
+    "vmTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-vm.json",
+    "fileshareTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-fileshare.json",
+    "aksTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-aks.json",
+    "virtualNetworkName": "[concat(toLower(parameters('deploymentPrefix')), '-aks-vnet')]",
+    "vmSubnetName": "[concat(toLower(parameters('deploymentPrefix')), '-vm-subnet')]",
+    "aksSubnetName": "[concat(toLower(parameters('deploymentPrefix')), '-aks-subnet')]",
+    "fileShareName": "[concat(toLower(parameters('deploymentPrefix')), '-fileshare')]",
+    "storageAccountName": "[concat(toLower(parameters('deploymentPrefix')), uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "name": "vnet-stack",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vnetTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "deploymentPrefix": {
+            "value": "[toLower(parameters('deploymentPrefix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "virtualNetworkName": {
+            "value": "[variables('virtualNetworkName')]"
+          },
+          "virtualNetworkAddressPrefixes": {
+            "value": "[parameters('virtualNetworkAddressPrefixes')]"
+          },
+          "vmSubnetName": {
+            "value": "[variables('vmSubnetName')]"
+          },
+          "vmSubnetAddressPrefix": {
+            "value": "[parameters('vmSubnetAddressPrefix')]"
+          },
+          "aksSubnetName": {
+            "value": "[variables('aksSubnetName')]"
+          },
+          "aksSubnetAddressPrefix": {
+            "value": "[parameters('aksSubnetAddressPrefix')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "aks-cluster-stack",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('aksTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "deploymentPrefix": {
+            "value": "[toLower(parameters('deploymentPrefix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "aksSubnetId": {
+            "value": "[reference('vnet-stack').outputs.aksSubnetRef.value]"
+          },
+          "aksClusterKubernetesVersion": {
+            "value": "[parameters('kubernetesVersion')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "fileshare-stack",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('fileshareTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "deploymentPrefix": {
+            "value": "[toLower(parameters('deploymentPrefix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "storageSKU": {
+            "value": "[parameters('storageSKU')]"
+          },
+          "storageAccountName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "fileShareName": {
+            "value": "[variables('fileShareName')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "virtualmachine-stack",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vmTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "deploymentPrefix": {
+            "value": "[toLower(parameters('deploymentPrefix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "publicSubnetRef": {
+            "value": "[reference('vnet-stack').outputs.vmSubnetRef.value]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "virtualMachineSize": {
+            "value": "[parameters('virtualMachineSize')]"
+          },
+          "storageAccountName": {
+            "value": "[reference('fileshare-stack').outputs.storageAccountName.value]"
+          },
+          "fileShareName": {
+            "value": "[reference('fileshare-stack').outputs.nfsAzureFileShare.value]"
+          },
+          "ServicePrincipalAppID": {
+            "value": "[parameters('ServicePrincipalAppID')]"
+          },
+          "ServicePrincipalSecret": {
+            "value": "[parameters('ServicePrincipalSecret')]"
+          },
+          "ServicePrincipalObjectID": {
+            "value": "[parameters('ServicePrincipalObjectID')]"
+          },
+          "AksClusterName": {
+            "value": "[reference('aks-cluster-stack').outputs.aksClusterName.value]"
+          },
+          "MoleculeUsername": {
+            "value": "[parameters('MoleculeUsername')]"
+          },
+          "MoleculePassword": {
+            "value": "[parameters('MoleculePassword')]"
+          },
+          "MoleculeAccountID": {
+            "value": "[parameters('MoleculeAccountID')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "ResourceGroupName": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    },
+    "ResourceGroupID": {
+      "type": "string",
+      "value": "[resourceGroup().id]"
+    },
+    "ResourceGroupLocation": {
+      "type": "string",
+      "value": "[resourceGroup().location]"
+    },
+    "AksClusterName": {
+      "type": "string",
+      "value": "[reference('aks-cluster-stack').outputs.aksClusterName.value]"
+    },
+    "AksControlPlanePrivateFQDN": {
+      "type": "string",
+      "value": "[reference('aks-cluster-stack').outputs.aksControlPlanePrivateFQDN.value]"
+    },
+    "StorageAccount": {
+      "type": "string",
+      "value": "[reference('fileshare-stack').outputs.storageAccountName.value]"
+    },
+    "StorageEndpoint": {
+      "type": "object",
+      "value": "[reference('fileshare-stack').outputs.storageEndpoint.value]"
+    },
+    "NfsAzureFileShare": {
+      "type": "string",
+      "value": "[reference('fileshare-stack').outputs.nfsAzureFileShare.value]"
+    },
+    "VMPublicIPAddress": {
+      "type": "string",
+      "value": "[reference('virtualmachine-stack').outputs.vmPublicIPAddress.value]"
+    },
+    "K8SServiceIPAddress": {
+      "type": "string",
+      "value": "[reference('virtualmachine-stack').outputs.k8sServiceIPAddress.value]"
+    }
+  }
+}

@@ -1,0 +1,275 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deploymentPrefix": {
+      "defaultValue": "boomi",
+      "minLength": 3,
+      "maxLength": 8,
+      "type": "string",
+      "metadata": {
+        "description": "Name of the deployment prefix"
+      }
+    },
+    "location": {
+      "defaultValue": "[resourceGroup().location]",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the location of AKS cluster."
+      }
+    },
+    "virtualNetworkName": {
+      "defaultValue": "[concat(parameters('deploymentPrefix'), '-ask-vnet')]",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the name of the virtual network."
+      }
+    },
+    "virtualNetworkAddressPrefixes": {
+      "defaultValue": "10.10.0.0/16",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the address prefixes of the virtual network."
+      }
+    },
+    "bastionSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.10.0.0/20",
+      "metadata": {
+        "description": "Specifies the Bastion subnet IP prefix. This prefix must be within vnet IP prefix address space."
+      }
+    },
+    "vmSubnetName": {
+      "type": "string",
+      "defaultValue": "VmSubnet",
+      "metadata": {
+        "description": "Specifies the name of the subnet which contains the virtual machine."
+      }
+    },
+    "vmSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.10.16.0/20",
+      "metadata": {
+        "description": "Specifies the address prefix of the subnet which contains the virtual machine."
+      }
+    },
+    "aksSubnetName": {
+      "defaultValue": "AksSystemSubnet",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the name of the subnet hosting the system node pool of the AKS cluster."
+      }
+    },
+    "aksSubnetAddressPrefix": {
+      "defaultValue": "10.10.32.0/20",
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the address prefix of the subnet hosting the system node pool of the AKS cluster."
+      }
+    }
+  },
+  "variables": {
+    "vmSubnetNsgName": "[concat(parameters('vmSubnetName'), '-nsg')]",
+    "vmSubnetNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('vmSubnetNsgName'))]",
+    "aksSubnetNsgName": "[concat(parameters('aksSubnetName'),'-nsg')]",
+    "aksSubnetNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('aksSubnetNsgName'))]",
+    "vmSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('vmSubnetName'))]",
+    "aksSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('aksSubnetName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('vmSubnetNsgName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "ssh-traffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "22",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "rdp-traffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "3389",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "http-traffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 102,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "https-traffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 103,
+              "direction": "Outbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('aksSubnetNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "http-traffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "https-traffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "k8s-service-traffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "30000-32999",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationPortRange": "30000-32999",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 102,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "http-k8s-service-traffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 103,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "https-k8s-service-traffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 104,
+              "direction": "Outbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2020-05-01",
+      "name": "[parameters('virtualNetworkName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('vmSubnetNsgId')]",
+        "[variables('aksSubnetNsgId')]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('virtualNetworkAddressPrefixes')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "subnets": [
+          {
+            "name": "[parameters('vmSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('vmSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[variables('vmSubnetNsgId')]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "[parameters('aksSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('aksSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[variables('aksSubnetNsgId')]"
+              },
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    }
+  ],
+  "outputs": {
+    "vmSubnetRef": {
+      "type": "string",
+      "value": "[variables('vmSubnetId')]"
+    },
+    "aksSubnetRef": {
+      "type": "string",
+      "value": "[variables('aksSubnetId')]"
+    }
+  }
+}
