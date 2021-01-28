@@ -2,15 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentPrefix": {
-            "defaultValue": "boomi",
-            "minLength": 3,
-            "maxLength": 8,
-            "type": "string",
-            "metadata": {
-                "description": "Name of the deployment prefix"
-            }
-        },
         "storageSKU": {
             "type": "string",
             "defaultValue": "Standard_LRS",
@@ -75,7 +66,7 @@
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
             ],
             "properties": {
-                "shareQuota": 50
+                "shareQuota": 100
             }
         }
     ],
