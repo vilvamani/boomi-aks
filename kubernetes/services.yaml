@@ -9,7 +9,7 @@ metadata:
 spec:
   selector:
     app: molecule
-  type: LoadBalancer
+  type: NodePort
   ports:
   - protocol: TCP
     port: 80
