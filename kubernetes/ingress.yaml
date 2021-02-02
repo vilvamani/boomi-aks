@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx-ingress
+  name: molecule-ingress
   annotations:
     kubernetes.io/ingress.class: azure-application-gateway
     appgw.ingress.kubernetes.io/backend-path-prefix: /
@@ -18,4 +18,4 @@ spec:
           service:
             name: molecule-service
             port:
-              number: 80
+              number: 9000
