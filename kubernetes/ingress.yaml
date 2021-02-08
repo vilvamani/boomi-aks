@@ -3,16 +3,12 @@ kind: Ingress
 metadata:
   name: molecule-ingress
   annotations:
-    kubernetes.io/ingress.class: azure-application-gateway
-    kubernetes.io/ingress.class: addon-http-application-routing
-    appgw.ingress.kubernetes.io/backend-path-prefix: /
-    appgw.ingress.kubernetes.io/backend-protocol: http
+    kubernetes.io/ingress.class: azure/application-gateway
 spec:
   rules:
   - http:
       paths:
       - path: /
-        pathType: Prefix
         backend:
           service:
             name: molecule-service
