@@ -5,18 +5,6 @@ do
   key="$1"
   shift
   case "$key" in
-    --app_id|-ai)
-      app_id="$1"
-      shift
-      ;;
-    --app_key|-ak)
-      app_key="$1"
-      shift
-      ;;
-    --tenant_id|-ti)
-      tenant_id="$1"
-      shift
-      ;;
     --resource_group|-rg)
       resource_group="$1"
       shift
@@ -39,10 +27,6 @@ do
       ;;
     --molecule_account)
       molecule_account="$1"
-      shift
-      ;;
-    --k8s_service_ip)
-      k8s_service_ip="$1"
       shift
       ;;
     --fileshare)
@@ -84,7 +68,11 @@ EOF
 
 yum install azure-cli -y
 
-az login --service-principal --username "$app_id" --password "$app_key" --tenant "$tenant_id"
+#Sign in with a managed identity
+az login --identity
+
+#Sign in with a service principal
+#az login --service-principal --username "$app_id" --password "$app_key" --tenant "$tenant_id"
 
 az aks get-credentials --resource-group "$resource_group" --name "$aks_name"
 
@@ -102,27 +90,6 @@ stringData:
   username: $molecule_username
   password: $molecule_password
   account: $molecule_account
-EOF
-
-cat >/tmp/service.yaml <<EOF
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: molecule-service
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-resource-group: $resource_group
-  labels:
-    app: molecule
-spec:
-  selector:
-    app: molecule
-  loadBalancerIP: $k8s_service_ip
-  type: LoadBalancer
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9090
 EOF
 
 cat >/tmp/persistentvolume.yaml <<EOF
@@ -152,11 +119,11 @@ EOF
 
 whoami
 
-kubectl get nodes --kubeconfig=/root/.kube/config
+kubectl get nodes -o wide --kubeconfig=/root/.kube/config
 
 kubectl create secret generic azure-secret --from-literal=azurestorageaccountname="$storage_acc_name" --from-literal=azurestorageaccountkey="$storage_acc_key"  --kubeconfig=/root/.kube/config
 
-#kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/persistent_volume.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f /tmp/persistentvolume.yaml --kubeconfig=/root/.kube/config
 
@@ -166,10 +133,11 @@ kubectl apply -f /tmp/secrets.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset.yaml --kubeconfig=/root/.kube/config
 
-kubectl apply -f /tmp/service.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/services.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --kubeconfig=/root/.kube/config
 
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --kubeconfig=/root/.kube/config
+
 rm /tmp/secrets.yaml
-rm /tmp/service.yaml
 rm /tmp/persistentvolume.yaml

@@ -3,7 +3,6 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "deploymentPrefix": {
-      "defaultValue": "boomi",
       "minLength": 3,
       "maxLength": 8,
       "type": "string",
@@ -11,54 +10,367 @@
         "description": "Name of the deployment prefix"
       }
     },
-    "location": {
-      "defaultValue": "[resourceGroup().location]",
+    "virtualNetworkAddressPrefix": {
       "type": "string",
       "metadata": {
-        "description": "Specifies the location of AKS cluster."
-      }
-    },
-    "virtualNetworkAddressPrefixes": {
-      "defaultValue": "10.10.0.0/16",
-      "type": "string",
-      "metadata": {
-        "description": "Specifies the address prefixes of the virtual network."
-      }
-    },
-    "vmSubnetAddressPrefix": {
-      "type": "string",
-      "defaultValue": "10.10.0.0/20",
-      "metadata": {
-        "description": "Specifies the address prefix of the subnet which contains the virtual machine."
+        "description": "Containers DNS server IP address."
       }
     },
     "aksSubnetAddressPrefix": {
-      "defaultValue": "10.10.16.0/20",
       "type": "string",
       "metadata": {
-        "description": "Specifies the address prefix of the subnet hosting the system node pool of the AKS cluster."
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "applicationGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "virtualMachineSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "aksDnsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+      }
+    },
+    "aksAgentOsDiskSizeGB": {
+      "minValue": 30,
+      "maxValue": 1023,
+      "type": "int",
+      "metadata": {
+        "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 30 to 1023."
+      }
+    },
+    "aksAgentCount": {
+      "minValue": 1,
+      "maxValue": 50,
+      "type": "int",
+      "metadata": {
+        "description": "The number of agent nodes for the cluster."
+      }
+    },
+    "aksAgentVMSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_A0",
+        "Standard_A1",
+        "Standard_A10",
+        "Standard_A11",
+        "Standard_A1_v2",
+        "Standard_A2",
+        "Standard_A2_v2",
+        "Standard_A2m_v2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_A4_v2",
+        "Standard_A4m_v2",
+        "Standard_A5",
+        "Standard_A6",
+        "Standard_A7",
+        "Standard_A8",
+        "Standard_A8_v2",
+        "Standard_A8m_v2",
+        "Standard_A9",
+        "Standard_B1ms",
+        "Standard_B1s",
+        "Standard_B2ms",
+        "Standard_B2s",
+        "Standard_B4ms",
+        "Standard_B8ms",
+        "Standard_D1",
+        "Standard_D11",
+        "Standard_D11_v2",
+        "Standard_D11_v2_Promo",
+        "Standard_D12",
+        "Standard_D12_v2",
+        "Standard_D12_v2_Promo",
+        "Standard_D13",
+        "Standard_D13_v2",
+        "Standard_D13_v2_Promo",
+        "Standard_D14",
+        "Standard_D14_v2",
+        "Standard_D14_v2_Promo",
+        "Standard_D15_v2",
+        "Standard_D16_v3",
+        "Standard_D16s_v3",
+        "Standard_D1_v2",
+        "Standard_D2",
+        "Standard_D2_v2",
+        "Standard_D2_v2_Promo",
+        "Standard_D2_v3",
+        "Standard_D2s_v3",
+        "Standard_D3",
+        "Standard_D32_v3",
+        "Standard_D32s_v3",
+        "Standard_D3_v2",
+        "Standard_D3_v2_Promo",
+        "Standard_D4",
+        "Standard_D4_v2",
+        "Standard_D4_v2_Promo",
+        "Standard_D4_v3",
+        "Standard_D4s_v3",
+        "Standard_D5_v2",
+        "Standard_D5_v2_Promo",
+        "Standard_D64_v3",
+        "Standard_D64s_v3",
+        "Standard_D8_v3",
+        "Standard_D8s_v3",
+        "Standard_DS1",
+        "Standard_DS11",
+        "Standard_DS11-1_v2",
+        "Standard_DS11_v2",
+        "Standard_DS11_v2_Promo",
+        "Standard_DS12",
+        "Standard_DS12-1_v2",
+        "Standard_DS12-2_v2",
+        "Standard_DS12_v2",
+        "Standard_DS12_v2_Promo",
+        "Standard_DS13",
+        "Standard_DS13-2_v2",
+        "Standard_DS13-4_v2",
+        "Standard_DS13_v2",
+        "Standard_DS13_v2_Promo",
+        "Standard_DS14",
+        "Standard_DS14-4_v2",
+        "Standard_DS14-8_v2",
+        "Standard_DS14_v2",
+        "Standard_DS14_v2_Promo",
+        "Standard_DS15_v2",
+        "Standard_DS1_v2",
+        "Standard_DS2",
+        "Standard_DS2_v2",
+        "Standard_DS2_v2_Promo",
+        "Standard_DS3",
+        "Standard_DS3_v2",
+        "Standard_DS3_v2_Promo",
+        "Standard_DS4",
+        "Standard_DS4_v2",
+        "Standard_DS4_v2_Promo",
+        "Standard_DS5_v2",
+        "Standard_DS5_v2_Promo",
+        "Standard_E16-4s_v3",
+        "Standard_E16-8s_v3",
+        "Standard_E16_v3",
+        "Standard_E16s_v3",
+        "Standard_E2_v3",
+        "Standard_E2s_v3",
+        "Standard_E32-16s_v3",
+        "Standard_E32-8s_v3",
+        "Standard_E32_v3",
+        "Standard_E32s_v3",
+        "Standard_E4-2s_v3",
+        "Standard_E4_v3",
+        "Standard_E4s_v3",
+        "Standard_E64-16s_v3",
+        "Standard_E64-32s_v3",
+        "Standard_E64_v3",
+        "Standard_E64i_v3",
+        "Standard_E64is_v3",
+        "Standard_E64s_v3",
+        "Standard_E8-2s_v3",
+        "Standard_E8-4s_v3",
+        "Standard_E8_v3",
+        "Standard_E8s_v3",
+        "Standard_F1",
+        "Standard_F16",
+        "Standard_F16s",
+        "Standard_F16s_v2",
+        "Standard_F1s",
+        "Standard_F2",
+        "Standard_F2s",
+        "Standard_F2s_v2",
+        "Standard_F32s_v2",
+        "Standard_F4",
+        "Standard_F4s",
+        "Standard_F4s_v2",
+        "Standard_F64s_v2",
+        "Standard_F72s_v2",
+        "Standard_F8",
+        "Standard_F8s",
+        "Standard_F8s_v2",
+        "Standard_G1",
+        "Standard_G2",
+        "Standard_G3",
+        "Standard_G4",
+        "Standard_G5",
+        "Standard_GS1",
+        "Standard_GS2",
+        "Standard_GS3",
+        "Standard_GS4",
+        "Standard_GS4-4",
+        "Standard_GS4-8",
+        "Standard_GS5",
+        "Standard_GS5-16",
+        "Standard_GS5-8",
+        "Standard_H16",
+        "Standard_H16m",
+        "Standard_H16mr",
+        "Standard_H16r",
+        "Standard_H8",
+        "Standard_H8m",
+        "Standard_L16s",
+        "Standard_L16s_v2",
+        "Standard_L32s",
+        "Standard_L4s",
+        "Standard_L8s",
+        "Standard_L8s_v2",
+        "Standard_M128",
+        "Standard_M128-32ms",
+        "Standard_M128-64ms",
+        "Standard_M128m",
+        "Standard_M128ms",
+        "Standard_M128s",
+        "Standard_M16-4ms",
+        "Standard_M16-8ms",
+        "Standard_M16ms",
+        "Standard_M32-16ms",
+        "Standard_M32-8ms",
+        "Standard_M32ls",
+        "Standard_M32ms",
+        "Standard_M32ts",
+        "Standard_M64",
+        "Standard_M64-16ms",
+        "Standard_M64-32ms",
+        "Standard_M64ls",
+        "Standard_M64m",
+        "Standard_M64ms",
+        "Standard_M64s",
+        "Standard_M8-2ms",
+        "Standard_M8-4ms",
+        "Standard_M8ms",
+        "Standard_NC12",
+        "Standard_NC12s_v2",
+        "Standard_NC12s_v3",
+        "Standard_NC24",
+        "Standard_NC24r",
+        "Standard_NC24rs_v2",
+        "Standard_NC24rs_v3",
+        "Standard_NC24s_v2",
+        "Standard_NC24s_v3",
+        "Standard_NC6",
+        "Standard_NC6s_v2",
+        "Standard_NC6s_v3",
+        "Standard_ND12s",
+        "Standard_ND24rs",
+        "Standard_ND24s",
+        "Standard_ND6s",
+        "Standard_NV12",
+        "Standard_NV24",
+        "Standard_NV6"
+      ],
+      "metadata": {
+        "description": "The size of the Virtual Machine."
       }
     },
     "kubernetesVersion": {
-      "defaultValue": "1.18.14",
       "type": "string",
       "allowedValues": [
+        "1.19.6",
+        "1.19.3",
         "1.18.14",
-        "1.18.8",
-        "1.17.3",
-        "1.17.11",
-        "1.16.15"
+        "1.18.10"
       ],
       "metadata": {
         "description": "The version of Kubernetes."
       }
     },
-    "storageSKU": {
+    "aksServiceCIDR": {
       "type": "string",
-      "defaultValue": "Standard_LRS",
       "metadata": {
-        "description": "Storage Account type for the VM and VM diagnostic storage"
-      },
+        "description": "A CIDR notation IP range from which to assign service cluster IPs."
+      }
+    },
+    "aksDnsServiceIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "aksDockerBridgeCIDR": {
+      "type": "string",
+      "metadata": {
+        "description": "A CIDR notation IP for Docker bridge."
+      }
+    },
+    "aksEnableRBAC": {
+      "type": "bool",
+      "metadata": {
+        "description": "Enable RBAC on the AKS cluster."
+      }
+    },
+    "aksAgentMaxPods": {
+      "type": "int",
+      "metadata": {
+        "description": "Specifies the maximum number of pods that can run on a node. The maximum number of pods per node in an AKS cluster is 250. The default maximum number of pods per node varies between kubenet and Azure CNI networking, and the method of cluster deployment."
+      }
+    },
+    "aksAgentMaxCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Specifies the maximum number of nodes for auto-scaling for the node pool."
+      }
+    },
+    "aksAgentMinCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Specifies the minimum number of nodes for auto-scaling for the node pool."
+      }
+    },
+    "aksAgentEnableAutoScaling": {
+      "type": "bool",
+      "metadata": {
+        "description": "Specifies whether to enable auto-scaling for the node pool."
+      }
+    },
+    "aksAgentScaleSetPriority": {
+      "allowedValues": [
+        "Spot",
+        "Regular"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the virtual machine scale set priority: Spot or Regular."
+      }
+    },
+    "aksAgentMode": {
+      "type": "string",
+      "allowedValues": [
+        "System",
+        "User"
+      ],
+      "metadata": {
+        "description": "Specifies the mode of an agent pool: System or User"
+      }
+    },
+    "aksAgentType": {
+      "type": "string",
+      "allowedValues": [
+        "VirtualMachineScaleSets",
+        "AvailabilitySet"
+      ],
+      "metadata": {
+        "description": "Specifies the type of a node pool: VirtualMachineScaleSets or AvailabilitySet"
+      }
+    },
+    "applicationGatewaySku": {
+      "allowedValues": [
+        "Standard_v2",
+        "WAF_v2"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The sku of the Application Gateway. Default: WAF_v2 (Detection mode). In order to further customize WAF, use azure portal or cli."
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
       "allowedValues": [
         "Standard_LRS",
         "Standard_GRS",
@@ -68,23 +380,31 @@
         "Premium_ZRS",
         "Standard_GZRS",
         "Standard_RAGZRS"
-      ]
-    },
-    "adminUsername": {
-      "type": "securestring",
+      ],
       "metadata": {
-        "description": "Default Admin username"
+        "description": "Storage Account type"
       }
     },
-    "adminPassword": {
-      "type": "securestring",
+    "storageAccountSKU": {
+      "type": "string",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
       "metadata": {
-        "description": "Default Admin password"
+        "description": "Storage Account SKU"
+      }
+    },
+    "storageAccountShareQuota": {
+      "type": "int",
+      "minValue": 100,
+      "maxValue": 1024,
+      "metadata": {
+        "description": "Storage Account Share Quota"
       }
     },
     "virtualMachineSize": {
       "type": "string",
-      "defaultValue": "Standard_DS1_v2",
       "allowedValues": [
         "Standard_B1s",
         "Standard_DS1_v2"
@@ -93,230 +413,788 @@
         "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
       }
     },
-    "ServicePrincipalObjectID": {
-      "type": "securestring"
-    },
-    "ServicePrincipalAppID": {
+    "adminUsername": {
       "type": "securestring",
+      "metadata": {
+        "description": "Bastion server login username"
+      }
     },
-    "ServicePrincipalSecret": {
-      "type": "securestring"
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Bastion server login password"
+      }
     },
     "MoleculeUsername": {
-      "type": "securestring"
+      "type": "securestring",
+      "metadata": {
+        "description": "Boomi platform user name"
+      }
     },
     "MoleculePassword": {
-      "type": "securestring"
+      "type": "securestring",
+      "metadata": {
+        "description": "Boomi platform user password"
+      }
     },
     "MoleculeAccountID": {
-      "type": "securestring"
+      "type": "securestring",
+      "metadata": {
+        "description": "Boomi platform account ID"
+      }
     }
   },
   "variables": {
-    "vnetTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-vnet.json",
-    "vmTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-vm.json",
-    "fileshareTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-fileshare.json",
-    "aksTemplateLink": "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/azure-aks.json",
-    "virtualNetworkName": "[concat(toLower(parameters('deploymentPrefix')), '-aks-vnet')]",
-    "vmSubnetName": "[concat(toLower(parameters('deploymentPrefix')), '-vm-subnet')]",
-    "aksSubnetName": "[concat(toLower(parameters('deploymentPrefix')), '-aks-subnet')]",
-    "fileShareName": "[concat(toLower(parameters('deploymentPrefix')), '-fileshare')]",
-    "storageAccountName": "[concat(toLower(parameters('deploymentPrefix')), uniqueString(resourceGroup().id))]"
+    "resgpguid": "[substring(replace(uniqueString(resourceGroup().id), '-', ''), 0, 4)]",
+    "prefix": "[toLower(parameters('deploymentPrefix'))]",
+    "nodeResourceGroup": "[concat(resourceGroup().name, '-ingressResourceGroup')]",
+    "aksUserIdentityName": "[concat(variables('prefix'), '-aksUserContrIdentity-', variables('resgpguid'))]",
+    "vmUserIdentityName": "[concat(variables('prefix'), '-vmUserContrIdentity-', variables('resgpguid'))]",
+    "appGatewayNsgName": "[concat(variables('prefix'), '-appgw-nsg-', variables('resgpguid'))]",
+    "vmNsgName": "[concat(variables('prefix'), '-vm-nsg-', variables('resgpguid'))]",
+    "kubernetesNsgName": "[concat(variables('prefix'), '-kubernetes-nsg-', variables('resgpguid'))]",
+    "vnetName": "[concat(variables('prefix'), '-vnet-', variables('resgpguid'))]",
+    "kubernetesSubnetName": "[concat(variables('prefix'), '-kubernetes-subnet')]",
+    "applicationGatewaySubnetName": "[concat(variables('prefix'), '-appgw-subnet')]",
+    "virtualMachineSubnetName": "[concat(variables('prefix'), '-vm-subnet')]",
+    "applicationGatewayPublicIpName": "[concat(variables('prefix'), '-appgw-publicip-', variables('resgpguid'))]",
+    "virtualMachinePublicIpName": "[concat(variables('prefix'), '-vmpublicip-', variables('resgpguid'))]",
+    "loadBalancersPublicIpName": "[concat(variables('prefix'), '-lbpublicip-', variables('resgpguid'))]",
+    "loadBalancersName": "[concat(variables('prefix'), '-lb-', variables('resgpguid'))]",
+    "applicationGatewayName": "[concat(variables('prefix'), '-appgateway-', variables('resgpguid'))]",
+    "storageAccountName": "[concat(variables('prefix'), uniqueString(resourceGroup().id))]",
+    "fileShareName": "[concat(variables('prefix'), '-fileshare-', variables('resgpguid'))]",
+    "aksClusterName": "[concat(variables('prefix'), '-aks-', variables('resgpguid'))]",
+    "virtualMachineNicName": "[concat(variables('prefix'), '-vm-nic-', variables('resgpguid'))]",
+    "virtualMachineName": "[concat(variables('prefix'), '-bastion-vm-', variables('resgpguid'))]",
+    "osDiskName": "[concat(variables('prefix'), '-os-disk-', variables('resgpguid'))]",
+    "aksUserIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('aksUserIdentityName'))]",
+    "vmUserIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('vmUserIdentityName'))]",
+    "kubernetesNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('kubernetesNsgName'))]",
+    "appGatewayNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('appGatewayNsgName'))]",
+    "vmNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('vmNsgName'))]",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+    "kubernetesSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('kubernetesSubnetName'))]",
+    "applicationGatewaySubnetId": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName'))]",
+    "virtualMachineSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('virtualMachineSubnetName'))]",
+    "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName'))]",
+    "virtualMachinePublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('virtualMachinePublicIpName'))]",
+    "loadBalancersPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('loadBalancersPublicIpName'))]",
+    "loadBalancersId": "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancersName'))]",
+    "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName'))]",
+    "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+    "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName'))]",
+    "virtualMachineNicId": "[resourceId('Microsoft.Network/networkInterfaces', variables('virtualMachineNicName'))]",
+    "virtualMachineId": "[resourceId('Microsoft.Compute/virtualMachines', variables('virtualMachineName'))]",
+    "networkContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+    "storageAccountKeyOperatorServiceRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
+    "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+    "readerRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+    "webApplicationFirewallConfiguration": {
+      "enabled": "true",
+      "firewallMode": "Detection"
+    },
+    "apiVersion": {
+      "userAssignedIdentities": "2018-11-30",
+      "roleAssignments": "2020-04-01-preview",
+      "network": "2020-07-01",
+      "storage": "2019-06-01",
+      "aksCluster": "2020-12-01",
+      "compute": "2020-06-01",
+      "deployments": "2020-10-01",
+      "extensions": "2020-06-01"
+    }
   },
   "resources": [
     {
-      "name": "vnet-stack",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[variables('aksUserIdentityName')]",
+      "apiVersion": "[variables('apiVersion').userAssignedIdentities]",
+      "location": "[resourceGroup().location]"
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[variables('vmUserIdentityName')]",
+      "apiVersion": "[variables('apiVersion').userAssignedIdentities]",
+      "location": "[resourceGroup().location]"
+    },
+    {
+      "apiVersion": "2020-05-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('appGatewayNsgName')]",
+      "location": "[resourceGroup().location]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('vnetTemplateLink')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "deploymentPrefix": {
-            "value": "[toLower(parameters('deploymentPrefix'))]"
+        "securityRules": [
+          {
+            "name": "sshInboundTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "22",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
           },
-          "location": {
-            "value": "[parameters('location')]"
+          {
+            "name": "rdpInboundTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "3389",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
           },
-          "virtualNetworkName": {
-            "value": "[variables('virtualNetworkName')]"
+          {
+            "name": "httpTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 102,
+              "direction": "Inbound"
+            }
           },
-          "virtualNetworkAddressPrefixes": {
-            "value": "[parameters('virtualNetworkAddressPrefixes')]"
+          {
+            "name": "httpsTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 103,
+              "direction": "Inbound"
+            }
           },
-          "vmSubnetName": {
-            "value": "[variables('vmSubnetName')]"
+          {
+            "name": "appGatewayTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "65200-65535",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 104,
+              "direction": "Inbound"
+            }
           },
-          "vmSubnetAddressPrefix": {
-            "value": "[parameters('vmSubnetAddressPrefix')]"
+          {
+            "name": "httpOutboundTraffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 105,
+              "direction": "Outbound"
+            }
           },
-          "aksSubnetName": {
-            "value": "[variables('aksSubnetName')]"
-          },
-          "aksSubnetAddressPrefix": {
-            "value": "[parameters('aksSubnetAddressPrefix')]"
+          {
+            "name": "httpsOutboundTraffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 106,
+              "direction": "Outbound"
+            }
           }
-        }
+        ]
       }
     },
     {
-      "name": "aks-cluster-stack",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "name": "[variables('kubernetesNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "location": "[resourceGroup().location]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('aksTemplateLink')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "deploymentPrefix": {
-            "value": "[toLower(parameters('deploymentPrefix'))]"
+        "securityRules": [
+          {
+            "name": "httpInboundTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
           },
-          "location": {
-            "value": "[parameters('location')]"
+          {
+            "name": "httpsInboundTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
           },
-          "aksSubnetId": {
-            "value": "[reference('vnet-stack').outputs.aksSubnetRef.value]"
+          {
+            "name": "k8sServiceTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "30000-32999",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationPortRange": "30000-32999",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 102,
+              "direction": "Inbound"
+            }
           },
-          "aksClusterKubernetesVersion": {
-            "value": "[parameters('kubernetesVersion')]"
+          {
+            "name": "httpK8sServiceOutboundTraffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 103,
+              "direction": "Outbound"
+            }
+          },
+          {
+            "name": "httpsK8sServiceOutboundTraffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 104,
+              "direction": "Outbound"
+            }
           }
-        }
+        ]
       }
     },
     {
-      "name": "fileshare-stack",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('vmNsgName')]",
+      "apiVersion": "[variables('apiVersion').network]",
+      "location": "[resourceGroup().location]",
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('fileshareTemplateLink')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "deploymentPrefix": {
-            "value": "[toLower(parameters('deploymentPrefix'))]"
+        "securityRules": [
+          {
+            "name": "sshInboundTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "22",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
           },
-          "location": {
-            "value": "[parameters('location')]"
+          {
+            "name": "rdpInboundTraffic",
+            "properties": {
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "Internet",
+              "destinationPortRange": "3389",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
           },
-          "storageSKU": {
-            "value": "[parameters('storageSKU')]"
+          {
+            "name": "httpOutboundTraffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "80",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 105,
+              "direction": "Outbound"
+            }
           },
-          "storageAccountName": {
-            "value": "[variables('storageAccountName')]"
-          },
-          "fileShareName": {
-            "value": "[variables('fileShareName')]"
+          {
+            "name": "httpsOutboundTraffic",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationPortRange": "443",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 106,
+              "direction": "Outbound"
+            }
           }
-        }
+        ]
       }
     },
     {
-      "name": "virtualmachine-stack",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('vnetName')]",
+      "apiVersion": "[variables('apiVersion').network]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('virtualNetworkAddressPrefix')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "subnets": [
+          {
+            "name": "[variables('kubernetesSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('aksSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[variables('kubernetesNsgId')]"
+              },
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "[variables('virtualMachineSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('virtualMachineSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[variables('vmNsgId')]"
+              },
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "[variables('applicationGatewaySubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('applicationGatewaySubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[variables('appGatewayNsgId')]"
+              },
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('vmNsgName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('virtualMachinePublicIpName')]",
+      "apiVersion": "[variables('apiVersion').network]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "owner": "booi-aks",
+        "type": "vm-bastion-inbount-ip"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 30
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "[variables('apiVersion').storage]",
+      "location": "[resourceGroup().location]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageAccountType')]",
+        "tier": "[parameters('storageAccountSKU')]"
+      },
+      "properties": {
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+      "apiVersion": "[variables('apiVersion').storage]",
+      "name": "[concat(variables('storageAccountName'), '/default/', variables('fileShareName'))]",
+      "properties": {
+        "shareQuota": "[parameters('storageAccountShareQuota')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ContainerService/managedClusters",
+      "name": "[variables('aksClusterName')]",
+      "apiVersion": "[variables('apiVersion').aksCluster]",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('aksUserIdentityName'))]": {}
+        }
+      },
+      "properties": {
+        "kubernetesVersion": "[parameters('kubernetesVersion')]",
+        "enableRBAC": "[parameters('aksEnableRBAC')]",
+        "enablePodSecurityPolicy": false,
+        "nodeResourceGroup": "[variables('nodeResourceGroup')]",
+        "dnsPrefix": "[parameters('aksDnsPrefix')]",
+        "agentPoolProfiles": [
+          {
+            "name": "agentpool1",
+            "osDiskSizeGB": "[parameters('aksAgentOsDiskSizeGB')]",
+            "count": "[parameters('aksAgentCount')]",
+            "vmSize": "[parameters('aksAgentVMSize')]",
+            "osType": "Linux",
+            "storageProfile": "ManagedDisks",
+            "dnsPrefix": "agents",
+            "vnetSubnetID": "[variables('kubernetesSubnetId')]",
+            "maxPods": "[parameters('aksAgentMaxPods')]",
+            "maxCount": "[parameters('aksAgentMaxCount')]",
+            "minCount": "[parameters('aksAgentMinCount')]",
+            "scaleSetPriority": "[parameters('aksAgentScaleSetPriority')]",
+            "enableAutoScaling": "[parameters('aksAgentEnableAutoScaling')]",
+            "mode": "[parameters('aksAgentMode')]",
+            "type": "[parameters('aksAgentType')]",
+            "availabilityZones": [ "1", "2", "3" ],
+            "enableNodePublicIP": false,
+            "orchestratorVersion": "[parameters('kubernetesVersion')]",
+            "nodeLabels": {}
+          }
+        ],
+        "addonProfiles": {
+          "ingressApplicationGateway": {
+            "enabled": true,
+            "config": {
+              "subnetId": "[variables('applicationGatewaySubnetId')]"
+            }
+          }
+        },
+        "networkProfile": {
+          "networkPlugin": "azure",
+          "networkPolicy": "azure",
+          "serviceCidr": "[parameters('aksServiceCIDR')]",
+          "dnsServiceIP": "[parameters('aksDnsServiceIP')]",
+          "dockerBridgeCidr": "[parameters('aksDockerBridgeCIDR')]",
+          "outboundType": "loadBalancer",
+          "loadBalancerSku": "Standard"
+        },
+        "apiServerAccessProfile": {
+          "enablePrivateCluster": true
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('aksUserIdentityName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.ContainerService/managedClusters/agentPools",
+      "apiVersion": "[variables('apiVersion').aksCluster]",
+      "name": "[concat(variables('aksClusterName'), '/agentpool2')]",
+      "properties": {
+        "osDiskSizeGB": "[parameters('aksAgentOsDiskSizeGB')]",
+        "count": "[parameters('aksAgentCount')]",
+        "vmSize": "[parameters('aksAgentVMSize')]",
+        "osType": "Linux",
+        "storageProfile": "ManagedDisks",
+        "dnsPrefix": "agents",
+        "vnetSubnetID": "[variables('kubernetesSubnetId')]",
+        "maxPods": "[parameters('aksAgentMaxPods')]",
+        "maxCount": "[parameters('aksAgentMaxCount')]",
+        "minCount": "[parameters('aksAgentMinCount')]",
+        "scaleSetPriority": "[parameters('aksAgentScaleSetPriority')]",
+        "enableAutoScaling": "[parameters('aksAgentEnableAutoScaling')]",
+        "mode": "[parameters('aksAgentMode')]",
+        "type": "[parameters('aksAgentType')]",
+        "availabilityZones": [ "1", "2", "3" ],
+        "enableNodePublicIP": false,
+        "orchestratorVersion": "[parameters('kubernetesVersion')]",
+        "nodeLabels": {}
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName'))]"
+      ]
+    },
+    {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "name": "RoleAssignmentDeploymentForAKSUserAssignedIdentity",
+      "apiVersion": "[variables('apiVersion').deployments]",
+      "subscriptionId": "[subscription().subscriptionId]",
+      "resourceGroup": "[resourceGroup().name]",
       "properties": {
         "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('vmTemplateLink')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "deploymentPrefix": {
-            "value": "[toLower(parameters('deploymentPrefix'))]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "publicSubnetRef": {
-            "value": "[reference('vnet-stack').outputs.vmSubnetRef.value]"
-          },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "virtualMachineSize": {
-            "value": "[parameters('virtualMachineSize')]"
-          },
-          "storageAccountName": {
-            "value": "[reference('fileshare-stack').outputs.storageAccountName.value]"
-          },
-          "fileShareName": {
-            "value": "[reference('fileshare-stack').outputs.nfsAzureFileShare.value]"
-          },
-          "ServicePrincipalAppID": {
-            "value": "[parameters('ServicePrincipalAppID')]"
-          },
-          "ServicePrincipalSecret": {
-            "value": "[parameters('ServicePrincipalSecret')]"
-          },
-          "ServicePrincipalObjectID": {
-            "value": "[parameters('ServicePrincipalObjectID')]"
-          },
-          "AksClusterName": {
-            "value": "[reference('aks-cluster-stack').outputs.aksClusterName.value]"
-          },
-          "MoleculeUsername": {
-            "value": "[parameters('MoleculeUsername')]"
-          },
-          "MoleculePassword": {
-            "value": "[parameters('MoleculePassword')]"
-          },
-          "MoleculeAccountID": {
-            "value": "[parameters('MoleculeAccountID')]"
-          }
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.ContainerService/managedClusters/providers/roleAssignments",
+              "name": "[concat(variables('aksClusterName'), '/Microsoft.Authorization/', guid(resourceGroup().id, 'identityaksaccess'))]",
+              "apiVersion": "[variables('apiVersion').roleAssignments]",
+              "properties": {
+                "roleDefinitionId": "[variables('contributorRole')]",
+                "principalId": "[reference(variables('aksUserIdentityId'), variables('apiVersion').userAssignedIdentities).principalId]",
+                "scope": "[variables('aksClusterId')]"
+              }
+            },
+            {
+              "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+              "name": "[concat(variables('storageAccountName'), '/Microsoft.Authorization/', guid(resourceGroup().id, 'identitystorageaccess'))]",
+              "apiVersion": "[variables('apiVersion').roleAssignments]",
+              "properties": {
+                "roleDefinitionId": "[variables('storageAccountKeyOperatorServiceRole')]",
+                "principalId": "[reference(variables('aksUserIdentityId'), variables('apiVersion').userAssignedIdentities).principalId]",
+                "scope": "[variables('storageAccountId')]"
+              }
+            }
+          ]
         }
-      }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('aksUserIdentityName'))]",
+        "[concat('Microsoft.ContainerService/managedClusters/', variables('aksClusterName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('virtualMachineNicName')]",
+      "apiVersion": "[variables('apiVersion').network]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[ concat(variables('prefix'), '-ipconfig-', variables('resgpguid')) ]",
+            "properties": {
+              "subnet": {
+                "id": "[variables('VirtualMachineSubnetId')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[variables('virtualMachinePublicIpId')]"
+              }
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('virtualMachinePublicIpName'))]"
+      ]
+    },
+    {
+      "name": "[variables('virtualMachineName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "[variables('apiVersion').compute]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "osProfile": {
+          "computerName": "[variables('virtualMachineName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "provisionVMAgent": true
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "OpenLogic",
+            "offer": "CentOS",
+            "sku": "8_2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[variables('osDiskName')]",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            }
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[variables('virtualMachineNicId')]"
+            }
+          ]
+        }
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', variables('aksUserIdentityName'))]": {}
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('virtualMachineNicName'))]",
+        "[concat('Microsoft.ContainerService/managedClusters/', variables('aksClusterName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "name": "RoleAssignmentDeploymentForVMUserAssignedIdentity",
+      "apiVersion": "[variables('apiVersion').deployments]",
+      "subscriptionId": "[subscription().subscriptionId]",
+      "resourceGroup": "[resourceGroup().name]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.Compute/virtualMachines/providers/roleAssignments",
+              "name": "[concat(variables('virtualMachineName'), '/Microsoft.Authorization/', guid(resourceGroup().id, 'identityvmaccess'))]",
+              "apiVersion": "[variables('apiVersion').roleAssignments]",
+              "properties": {
+                "roleDefinitionId": "[variables('contributorRole')]",
+                "principalId": "[reference(variables('vmUserIdentityId'), variables('apiVersion').userAssignedIdentities).principalId]",
+                "scope": "[variables('virtualMachineId')]"
+              }
+            },
+            {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "apiVersion": "[variables('apiVersion').roleAssignments]",
+              "name": "[guid(resourceGroup().id, 'identityrgaccess')]",
+              "properties": {
+                "roleDefinitionId": "[variables('readerRole')]",
+                "principalId": "[reference(variables('vmUserIdentityId'), variables('apiVersion').userAssignedIdentities).principalId]",
+                "scope": "[resourceGroup().id]"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('vmUserIdentityName'))]",
+
+        "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('virtualMachineName'),'/installcustomscript')]",
+      "apiVersion": "[variables('apiVersion').extensions]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/userdata-scripts/cuserdata.sh"
+          ],
+          "commandToExecute": "[concat('./cuserdata.sh', ' --resource_group \"', resourceGroup().name, '\" --aks_name \"', variables('aksClusterName'), '\" --storage_acc_name \"', variables('storageAccountName'), '\" --molecule_username \"', parameters('MoleculeUsername'), '\" --molecule_password \"', parameters('MoleculePassword'), '\" --molecule_account \"', parameters('MoleculeAccountID'), '\" --fileshare \"', variables('fileShareName'), '\"')]"
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForVMUserAssignedIdentity')]",
+        "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForAKSUserAssignedIdentity')]",
+        "[concat('Microsoft.ContainerService/managedClusters/agentPools/', variables('aksClusterName'), '/nodepool')]"
+      ]
     }
   ],
   "outputs": {
-    "ResourceGroupName": {
+    "subscriptionId": {
+      "type": "string",
+      "value": "[subscription().subscriptionId]"
+    },
+    "resourceGroupName": {
       "type": "string",
       "value": "[resourceGroup().name]"
     },
-    "ResourceGroupID": {
+    "resourceGroupID": {
       "type": "string",
       "value": "[resourceGroup().id]"
     },
-    "ResourceGroupLocation": {
+    "resourceGroupLocation": {
       "type": "string",
       "value": "[resourceGroup().location]"
     },
-    "AksClusterName": {
+    "vmUserIdentityResourceId": {
       "type": "string",
-      "value": "[reference('aks-cluster-stack').outputs.aksClusterName.value]"
+      "value": "[variables('vmUserIdentityId')]"
     },
-    "AksControlPlanePrivateFQDN": {
+    "vmUserIdentityClientId": {
       "type": "string",
-      "value": "[reference('aks-cluster-stack').outputs.aksControlPlanePrivateFQDN.value]"
+      "value": "[reference(variables('vmUserIdentityId'), variables('apiVersion').userAssignedIdentities).clientId]"
     },
-    "StorageAccount": {
+    "aksUserIdentityResourceId": {
       "type": "string",
-      "value": "[reference('fileshare-stack').outputs.storageAccountName.value]"
+      "value": "[variables('aksUserIdentityId')]"
+    },
+    "aksUserIdentityClientId": {
+      "type": "string",
+      "value": "[reference(variables('aksUserIdentityId'), variables('apiVersion').userAssignedIdentities).clientId]"
+    },
+    "aksApiServerAddress": {
+      "type": "string",
+      "value": "[reference(variables('aksClusterId'), '2018-03-31').fqdn]"
+    },
+    "aksClusterName": {
+      "type": "string",
+      "value": "[variables('aksClusterName')]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
     },
     "StorageEndpoint": {
       "type": "object",
-      "value": "[reference('fileshare-stack').outputs.storageEndpoint.value]"
+      "value": "[reference(variables('storageAccountName')).primaryEndpoints]"
     },
-    "NfsAzureFileShare": {
+    "nfsAzureFileShare": {
       "type": "string",
-      "value": "[reference('fileshare-stack').outputs.nfsAzureFileShare.value]"
+      "value": "[variables('fileShareName')]"
     },
-    "VMPublicIPAddress": {
+    "virtualMachinePublicIPAddress": {
       "type": "string",
-      "value": "[reference('virtualmachine-stack').outputs.vmPublicIPAddress.value]"
-    },
-    "K8SServiceIPAddress": {
-      "type": "string",
-      "value": "[reference('virtualmachine-stack').outputs.k8sServiceIPAddress.value]"
+      "value": "[reference(variables('virtualMachinePublicIpName')).ipAddress]"
     }
   }
 }
