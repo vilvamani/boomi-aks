@@ -1111,7 +1111,6 @@
       },
       "dependsOn": [
         "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('vmUserIdentityName'))]",
-
         "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
       ]
     },
@@ -1134,8 +1133,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForVMUserAssignedIdentity')]",
-        "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForAKSUserAssignedIdentity')]",
-        "[concat('Microsoft.ContainerService/managedClusters/agentPools/', variables('aksClusterName'), '/nodepool')]"
+        "[concat('Microsoft.Resources/deployments/', 'RoleAssignmentDeploymentForAKSUserAssignedIdentity')]"
       ]
     }
   ],
