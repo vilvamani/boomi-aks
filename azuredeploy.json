@@ -57,7 +57,6 @@
       }
     },
     "aksAgentVMSize": {
-      "type": "string",
       "allowedValues": [
         "Standard_A0",
         "Standard_A1",
@@ -265,18 +264,19 @@
         "Standard_NV24",
         "Standard_NV6"
       ],
+      "type": "string",
       "metadata": {
         "description": "The size of the Virtual Machine."
       }
     },
     "kubernetesVersion": {
-      "type": "string",
       "allowedValues": [
         "1.19.6",
         "1.19.3",
         "1.18.14",
         "1.18.10"
       ],
+      "type": "string",
       "metadata": {
         "description": "The version of Kubernetes."
       }
@@ -370,7 +370,6 @@
       }
     },
     "storageAccountType": {
-      "type": "string",
       "allowedValues": [
         "Standard_LRS",
         "Standard_GRS",
@@ -381,34 +380,35 @@
         "Standard_GZRS",
         "Standard_RAGZRS"
       ],
+      "type": "string",
       "metadata": {
         "description": "Storage Account type"
       }
     },
     "storageAccountSKU": {
-      "type": "string",
       "allowedValues": [
         "Standard",
         "Premium"
       ],
+      "type": "string",
       "metadata": {
         "description": "Storage Account SKU"
       }
     },
     "storageAccountShareQuota": {
-      "type": "int",
       "minValue": 100,
       "maxValue": 1024,
+      "type": "int",
       "metadata": {
         "description": "Storage Account Share Quota"
       }
     },
     "virtualMachineSize": {
-      "type": "string",
       "allowedValues": [
         "Standard_B1s",
         "Standard_DS1_v2"
       ],
+      "type": "string",
       "metadata": {
         "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
       }

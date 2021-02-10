@@ -1,6 +1,99 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deploymentPrefix": {
+      "value": "boomi"
+    },
+    "virtualNetworkAddressPrefix": {
+      "value": "10.0.0.0/8"
+    },
+    "aksSubnetAddressPrefix": {
+      "value": "10.0.0.0/16"
+    },
+    "applicationGatewaySubnetAddressPrefix": {
+      "value": "10.1.0.0/16"
+    },
+    "virtualMachineSubnetAddressPrefix": {
+      "value": "10.2.0.0/16"
+    },
+    "aksDnsPrefix": {
+      "value": "aks"
+    },
+    "aksAgentOsDiskSizeGB": {
+      "value": 40
+    },
+    "aksAgentCount": {
+      "value": 2
+    },
+    "aksAgentVMSize": {
+      "value": "Standard_D3_v2"
+    },
+    "kubernetesVersion": {
+      "value": "1.19.6"
+    },
+    "aksServiceCIDR": {
+      "value": "10.3.0.0/16"
+    },
+    "aksDnsServiceIP": {
+      "value": "10.3.0.10"
+    },
+    "aksDockerBridgeCIDR": {
+      "value": "172.17.0.1/16"
+    },
+    "aksEnableRBAC": {
+      "value": true
+    },
+    "aksAgentMaxPods": {
+      "value": 250
+    },
+    "aksAgentMaxCount": {
+      "value": 100
+    },
+    "aksAgentMinCount": {
+      "value": 1
+    },
+    "aksAgentEnableAutoScaling": {
+      "value": true
+    },
+    "aksAgentScaleSetPriority": {
+      "value": "Regular"
+    },
+    "aksAgentMode": {
+      "value": "System"
+    },
+    "aksAgentType": {
+      "value": "VirtualMachineScaleSets"
+    },
+    "applicationGatewaySku": {
+      "value": "WAF_v2"
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "storageAccountSKU": {
+      "value": "Standard"
+    },
+    "storageAccountShareQuota": {
+      "value": 100
+    },
+    "virtualMachineSize": {
+      "value": "Standard_DS1_v2"
+    },
+    "adminUsername": {
+      "value": ""
+    },
+    "adminPassword": {
+      "value": ""
+    },
+    "MoleculeUsername": {
+      "value": ""
+    },
+    "MoleculePassword": {
+      "value": ""
+    },
+    "MoleculeAccountID": {
+      "value": ""
     }
+  }
 }
