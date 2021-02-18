@@ -13,10 +13,6 @@ do
       aks_name="$1"
       shift
       ;;
-    --storage_acc_name|-san)
-      storage_acc_name="$1"
-      shift
-      ;;
     --molecule_username)
       molecule_username="$1"
       shift
@@ -31,6 +27,10 @@ do
       ;;
     --fileshare)
       fileshare="$1"
+      shift
+      ;;
+    --netAppIP)
+      netAppIP="$1"
       shift
       ;;
     --help|-help|-h)
@@ -68,16 +68,22 @@ EOF
 
 yum install azure-cli -y
 
+yum install -y nfs-utils
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
 #Sign in with a managed identity
 az login --identity
 
-#Sign in with a service principal
-#az login --service-principal --username "$app_id" --password "$app_key" --tenant "$tenant_id"
-
 az aks get-credentials --resource-group "$resource_group" --name "$aks_name"
 
-# Get storage account key
-storage_acc_key=$(az storage account keys list --resource-group "$resource_group" --account-name "$storage_acc_name" --query "[0].value" -o tsv)
+mkdir ~/$fileshare
+
+mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=3,tcp $netAppIP:/$fileshare ~/$fileshare
+
+chmod -R 777 ~/$fileshare
 
 cat >/tmp/secrets.yaml <<EOF
 ---
@@ -99,37 +105,43 @@ kind: PersistentVolume
 metadata:
   name: azurefile
 spec:
+  storageClassName: ""
   capacity:
-    storage: 5Gi
+    storage: 100Gi
   accessModes:
     - ReadWriteMany
-  storageClassName: "azurefile"
-  azureFile:
-    secretName: azure-secret
-    shareName: $fileshare
-    readOnly: false
   mountOptions:
-  - dir_mode=0777
-  - file_mode=0777
-  - uid=1000
-  - gid=1000
-  - mfsymlinks
-  - nobrl
+    - vers=3
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: $netAppIP
+    path: /$fileshare
+EOF
+
+cat >/tmp/persistentvolumeclam.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: azurefile
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Gi
 EOF
 
 whoami
 
-kubectl get nodes -o wide --kubeconfig=/root/.kube/config
-
-kubectl create secret generic azure-secret --from-literal=azurestorageaccountname="$storage_acc_name" --from-literal=azurestorageaccountkey="$storage_acc_key"  --kubeconfig=/root/.kube/config
-
 kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f /tmp/secrets.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f /tmp/persistentvolume.yaml --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/persistent_volume_claim.yaml --kubeconfig=/root/.kube/config
-
-kubectl apply -f /tmp/secrets.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f /tmp/persistentvolumeclam.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset.yaml --kubeconfig=/root/.kube/config
 
@@ -141,3 +153,4 @@ kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kube
 
 rm /tmp/secrets.yaml
 rm /tmp/persistentvolume.yaml
+rm /tmp/persistentvolumeclam.yaml

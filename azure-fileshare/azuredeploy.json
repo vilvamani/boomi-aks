@@ -16,6 +16,12 @@
         "description": "Containers DNS server IP address."
       }
     },
+    "virtualMachineSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
     "aksSubnetAddressPrefix": {
       "type": "string",
       "metadata": {
@@ -28,12 +34,7 @@
         "description": "Containers DNS server IP address."
       }
     },
-    "virtualMachineSubnetAddressPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Containers DNS server IP address."
-      }
-    },
+
     "aksDnsPrefix": {
       "type": "string",
       "metadata": {
@@ -58,211 +59,22 @@
     },
     "aksAgentVMSize": {
       "allowedValues": [
-        "Standard_A0",
-        "Standard_A1",
-        "Standard_A10",
-        "Standard_A11",
-        "Standard_A1_v2",
-        "Standard_A2",
-        "Standard_A2_v2",
-        "Standard_A2m_v2",
-        "Standard_A3",
-        "Standard_A4",
-        "Standard_A4_v2",
-        "Standard_A4m_v2",
-        "Standard_A5",
-        "Standard_A6",
-        "Standard_A7",
-        "Standard_A8",
-        "Standard_A8_v2",
-        "Standard_A8m_v2",
-        "Standard_A9",
-        "Standard_B1ms",
-        "Standard_B1s",
-        "Standard_B2ms",
-        "Standard_B2s",
-        "Standard_B4ms",
-        "Standard_B8ms",
         "Standard_D1",
-        "Standard_D11",
-        "Standard_D11_v2",
-        "Standard_D11_v2_Promo",
-        "Standard_D12",
-        "Standard_D12_v2",
-        "Standard_D12_v2_Promo",
-        "Standard_D13",
-        "Standard_D13_v2",
-        "Standard_D13_v2_Promo",
-        "Standard_D14",
-        "Standard_D14_v2",
-        "Standard_D14_v2_Promo",
-        "Standard_D15_v2",
-        "Standard_D16_v3",
-        "Standard_D16s_v3",
-        "Standard_D1_v2",
         "Standard_D2",
-        "Standard_D2_v2",
-        "Standard_D2_v2_Promo",
-        "Standard_D2_v3",
-        "Standard_D2s_v3",
         "Standard_D3",
-        "Standard_D32_v3",
-        "Standard_D32s_v3",
-        "Standard_D3_v2",
-        "Standard_D3_v2_Promo",
         "Standard_D4",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
         "Standard_D4_v2",
-        "Standard_D4_v2_Promo",
-        "Standard_D4_v3",
-        "Standard_D4s_v3",
-        "Standard_D5_v2",
-        "Standard_D5_v2_Promo",
-        "Standard_D64_v3",
-        "Standard_D64s_v3",
-        "Standard_D8_v3",
-        "Standard_D8s_v3",
         "Standard_DS1",
-        "Standard_DS11",
-        "Standard_DS11-1_v2",
-        "Standard_DS11_v2",
-        "Standard_DS11_v2_Promo",
-        "Standard_DS12",
-        "Standard_DS12-1_v2",
-        "Standard_DS12-2_v2",
-        "Standard_DS12_v2",
-        "Standard_DS12_v2_Promo",
-        "Standard_DS13",
-        "Standard_DS13-2_v2",
-        "Standard_DS13-4_v2",
-        "Standard_DS13_v2",
-        "Standard_DS13_v2_Promo",
-        "Standard_DS14",
-        "Standard_DS14-4_v2",
-        "Standard_DS14-8_v2",
-        "Standard_DS14_v2",
-        "Standard_DS14_v2_Promo",
-        "Standard_DS15_v2",
-        "Standard_DS1_v2",
         "Standard_DS2",
-        "Standard_DS2_v2",
-        "Standard_DS2_v2_Promo",
         "Standard_DS3",
-        "Standard_DS3_v2",
-        "Standard_DS3_v2_Promo",
         "Standard_DS4",
-        "Standard_DS4_v2",
-        "Standard_DS4_v2_Promo",
-        "Standard_DS5_v2",
-        "Standard_DS5_v2_Promo",
-        "Standard_E16-4s_v3",
-        "Standard_E16-8s_v3",
-        "Standard_E16_v3",
-        "Standard_E16s_v3",
-        "Standard_E2_v3",
-        "Standard_E2s_v3",
-        "Standard_E32-16s_v3",
-        "Standard_E32-8s_v3",
-        "Standard_E32_v3",
-        "Standard_E32s_v3",
-        "Standard_E4-2s_v3",
-        "Standard_E4_v3",
-        "Standard_E4s_v3",
-        "Standard_E64-16s_v3",
-        "Standard_E64-32s_v3",
-        "Standard_E64_v3",
-        "Standard_E64i_v3",
-        "Standard_E64is_v3",
-        "Standard_E64s_v3",
-        "Standard_E8-2s_v3",
-        "Standard_E8-4s_v3",
-        "Standard_E8_v3",
-        "Standard_E8s_v3",
-        "Standard_F1",
-        "Standard_F16",
-        "Standard_F16s",
-        "Standard_F16s_v2",
-        "Standard_F1s",
-        "Standard_F2",
-        "Standard_F2s",
-        "Standard_F2s_v2",
-        "Standard_F32s_v2",
-        "Standard_F4",
-        "Standard_F4s",
-        "Standard_F4s_v2",
-        "Standard_F64s_v2",
-        "Standard_F72s_v2",
-        "Standard_F8",
-        "Standard_F8s",
-        "Standard_F8s_v2",
-        "Standard_G1",
-        "Standard_G2",
-        "Standard_G3",
-        "Standard_G4",
-        "Standard_G5",
-        "Standard_GS1",
-        "Standard_GS2",
-        "Standard_GS3",
-        "Standard_GS4",
-        "Standard_GS4-4",
-        "Standard_GS4-8",
-        "Standard_GS5",
-        "Standard_GS5-16",
-        "Standard_GS5-8",
-        "Standard_H16",
-        "Standard_H16m",
-        "Standard_H16mr",
-        "Standard_H16r",
-        "Standard_H8",
-        "Standard_H8m",
-        "Standard_L16s",
-        "Standard_L16s_v2",
-        "Standard_L32s",
-        "Standard_L4s",
-        "Standard_L8s",
-        "Standard_L8s_v2",
-        "Standard_M128",
-        "Standard_M128-32ms",
-        "Standard_M128-64ms",
-        "Standard_M128m",
-        "Standard_M128ms",
-        "Standard_M128s",
-        "Standard_M16-4ms",
-        "Standard_M16-8ms",
-        "Standard_M16ms",
-        "Standard_M32-16ms",
-        "Standard_M32-8ms",
-        "Standard_M32ls",
-        "Standard_M32ms",
-        "Standard_M32ts",
-        "Standard_M64",
-        "Standard_M64-16ms",
-        "Standard_M64-32ms",
-        "Standard_M64ls",
-        "Standard_M64m",
-        "Standard_M64ms",
-        "Standard_M64s",
-        "Standard_M8-2ms",
-        "Standard_M8-4ms",
-        "Standard_M8ms",
-        "Standard_NC12",
-        "Standard_NC12s_v2",
-        "Standard_NC12s_v3",
-        "Standard_NC24",
-        "Standard_NC24r",
-        "Standard_NC24rs_v2",
-        "Standard_NC24rs_v3",
-        "Standard_NC24s_v2",
-        "Standard_NC24s_v3",
-        "Standard_NC6",
-        "Standard_NC6s_v2",
-        "Standard_NC6s_v3",
-        "Standard_ND12s",
-        "Standard_ND24rs",
-        "Standard_ND24s",
-        "Standard_ND6s",
-        "Standard_NV12",
-        "Standard_NV24",
-        "Standard_NV6"
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2"
       ],
       "type": "string",
       "metadata": {
@@ -299,74 +111,20 @@
         "description": "A CIDR notation IP for Docker bridge."
       }
     },
-    "aksEnableRBAC": {
-      "type": "bool",
-      "metadata": {
-        "description": "Enable RBAC on the AKS cluster."
-      }
-    },
     "aksAgentMaxPods": {
       "type": "int",
       "metadata": {
         "description": "Specifies the maximum number of pods that can run on a node. The maximum number of pods per node in an AKS cluster is 250. The default maximum number of pods per node varies between kubenet and Azure CNI networking, and the method of cluster deployment."
       }
     },
-    "aksAgentMaxCount": {
-      "type": "int",
-      "metadata": {
-        "description": "Specifies the maximum number of nodes for auto-scaling for the node pool."
-      }
-    },
-    "aksAgentMinCount": {
-      "type": "int",
-      "metadata": {
-        "description": "Specifies the minimum number of nodes for auto-scaling for the node pool."
-      }
-    },
-    "aksAgentEnableAutoScaling": {
-      "type": "bool",
-      "metadata": {
-        "description": "Specifies whether to enable auto-scaling for the node pool."
-      }
-    },
-    "aksAgentScaleSetPriority": {
+    "virtualMachineSize": {
       "allowedValues": [
-        "Spot",
-        "Regular"
+        "Standard_B1s",
+        "Standard_DS1_v2"
       ],
       "type": "string",
       "metadata": {
-        "description": "Specifies the virtual machine scale set priority: Spot or Regular."
-      }
-    },
-    "aksAgentMode": {
-      "type": "string",
-      "allowedValues": [
-        "System",
-        "User"
-      ],
-      "metadata": {
-        "description": "Specifies the mode of an agent pool: System or User"
-      }
-    },
-    "aksAgentType": {
-      "type": "string",
-      "allowedValues": [
-        "VirtualMachineScaleSets",
-        "AvailabilitySet"
-      ],
-      "metadata": {
-        "description": "Specifies the type of a node pool: VirtualMachineScaleSets or AvailabilitySet"
-      }
-    },
-    "applicationGatewaySku": {
-      "allowedValues": [
-        "Standard_v2",
-        "WAF_v2"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "The sku of the Application Gateway. Default: WAF_v2 (Detection mode). In order to further customize WAF, use azure portal or cli."
+        "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
       }
     },
     "storageAccountType": {
@@ -401,16 +159,6 @@
       "type": "int",
       "metadata": {
         "description": "Storage Account Share Quota"
-      }
-    },
-    "virtualMachineSize": {
-      "allowedValues": [
-        "Standard_B1s",
-        "Standard_DS1_v2"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
       }
     },
     "adminUsername": {
@@ -454,14 +202,10 @@
     "vmNsgName": "[concat(variables('prefix'), '-vm-nsg-', variables('resgpguid'))]",
     "kubernetesNsgName": "[concat(variables('prefix'), '-kubernetes-nsg-', variables('resgpguid'))]",
     "vnetName": "[concat(variables('prefix'), '-vnet-', variables('resgpguid'))]",
+    "virtualMachineSubnetName": "[concat(variables('prefix'), '-vm-subnet')]",
     "kubernetesSubnetName": "[concat(variables('prefix'), '-kubernetes-subnet')]",
     "applicationGatewaySubnetName": "[concat(variables('prefix'), '-appgw-subnet')]",
-    "virtualMachineSubnetName": "[concat(variables('prefix'), '-vm-subnet')]",
-    "applicationGatewayPublicIpName": "[concat(variables('prefix'), '-appgw-publicip-', variables('resgpguid'))]",
     "virtualMachinePublicIpName": "[concat(variables('prefix'), '-vmpublicip-', variables('resgpguid'))]",
-    "loadBalancersPublicIpName": "[concat(variables('prefix'), '-lbpublicip-', variables('resgpguid'))]",
-    "loadBalancersName": "[concat(variables('prefix'), '-lb-', variables('resgpguid'))]",
-    "applicationGatewayName": "[concat(variables('prefix'), '-appgateway-', variables('resgpguid'))]",
     "storageAccountName": "[concat(variables('prefix'), uniqueString(resourceGroup().id))]",
     "fileShareName": "[concat(variables('prefix'), '-fileshare-', variables('resgpguid'))]",
     "aksClusterName": "[concat(variables('prefix'), '-aks-', variables('resgpguid'))]",
@@ -474,26 +218,17 @@
     "appGatewayNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('appGatewayNsgName'))]",
     "vmNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('vmNsgName'))]",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+    "virtualMachineSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('virtualMachineSubnetName'))]",
     "kubernetesSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('kubernetesSubnetName'))]",
     "applicationGatewaySubnetId": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName'))]",
-    "virtualMachineSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('virtualMachineSubnetName'))]",
-    "applicationGatewayPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('applicationGatewayPublicIpName'))]",
     "virtualMachinePublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('virtualMachinePublicIpName'))]",
-    "loadBalancersPublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('loadBalancersPublicIpName'))]",
-    "loadBalancersId": "[resourceId('Microsoft.Network/loadBalancers', variables('loadBalancersName'))]",
-    "applicationGatewayId": "[resourceId('Microsoft.Network/applicationGateways', variables('applicationGatewayName'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
     "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName'))]",
     "virtualMachineNicId": "[resourceId('Microsoft.Network/networkInterfaces', variables('virtualMachineNicName'))]",
     "virtualMachineId": "[resourceId('Microsoft.Compute/virtualMachines', variables('virtualMachineName'))]",
-    "networkContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
     "storageAccountKeyOperatorServiceRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '81a9662b-bebf-436f-a333-f67b29880f12')]",
     "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
     "readerRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-    "webApplicationFirewallConfiguration": {
-      "enabled": "true",
-      "firewallMode": "Detection"
-    },
     "apiVersion": {
       "userAssignedIdentities": "2018-11-30",
       "roleAssignments": "2020-04-01-preview",
@@ -772,22 +507,22 @@
         },
         "subnets": [
           {
-            "name": "[variables('kubernetesSubnetName')]",
+            "name": "[variables('virtualMachineSubnetName')]",
             "properties": {
-              "addressPrefix": "[parameters('aksSubnetAddressPrefix')]",
+              "addressPrefix": "[parameters('virtualMachineSubnetAddressPrefix')]",
               "networkSecurityGroup": {
-                "id": "[variables('kubernetesNsgId')]"
+                "id": "[variables('vmNsgId')]"
               },
               "privateEndpointNetworkPolicies": "Enabled",
               "privateLinkServiceNetworkPolicies": "Enabled"
             }
           },
           {
-            "name": "[variables('virtualMachineSubnetName')]",
+            "name": "[variables('kubernetesSubnetName')]",
             "properties": {
-              "addressPrefix": "[parameters('virtualMachineSubnetAddressPrefix')]",
+              "addressPrefix": "[parameters('aksSubnetAddressPrefix')]",
               "networkSecurityGroup": {
-                "id": "[variables('vmNsgId')]"
+                "id": "[variables('kubernetesNsgId')]"
               },
               "privateEndpointNetworkPolicies": "Enabled",
               "privateLinkServiceNetworkPolicies": "Enabled"
@@ -869,7 +604,7 @@
       },
       "properties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
-        "enableRBAC": "[parameters('aksEnableRBAC')]",
+        "enableRBAC": true,
         "enablePodSecurityPolicy": false,
         "nodeResourceGroup": "[variables('nodeResourceGroup')]",
         "dnsPrefix": "[parameters('aksDnsPrefix')]",
@@ -884,12 +619,12 @@
             "dnsPrefix": "agents",
             "vnetSubnetID": "[variables('kubernetesSubnetId')]",
             "maxPods": "[parameters('aksAgentMaxPods')]",
-            "maxCount": "[parameters('aksAgentMaxCount')]",
-            "minCount": "[parameters('aksAgentMinCount')]",
-            "scaleSetPriority": "[parameters('aksAgentScaleSetPriority')]",
-            "enableAutoScaling": "[parameters('aksAgentEnableAutoScaling')]",
-            "mode": "[parameters('aksAgentMode')]",
-            "type": "[parameters('aksAgentType')]",
+            "maxCount": 100,
+            "minCount": 1,
+            "scaleSetPriority": "Regular",
+            "enableAutoScaling": true,
+            "mode": "System",
+            "type": "VirtualMachineScaleSets",
             "availabilityZones": [ "1", "2", "3" ],
             "enableNodePublicIP": false,
             "orchestratorVersion": "[parameters('kubernetesVersion')]",
@@ -935,19 +670,19 @@
         "dnsPrefix": "agents",
         "vnetSubnetID": "[variables('kubernetesSubnetId')]",
         "maxPods": "[parameters('aksAgentMaxPods')]",
-        "maxCount": "[parameters('aksAgentMaxCount')]",
-        "minCount": "[parameters('aksAgentMinCount')]",
-        "scaleSetPriority": "[parameters('aksAgentScaleSetPriority')]",
-        "enableAutoScaling": "[parameters('aksAgentEnableAutoScaling')]",
-        "mode": "[parameters('aksAgentMode')]",
-        "type": "[parameters('aksAgentType')]",
+        "maxCount": 100,
+        "minCount": 1,
+        "scaleSetPriority": "Regular",
+        "enableAutoScaling": true,
+        "mode": "System",
+        "type": "VirtualMachineScaleSets",
         "availabilityZones": [ "1", "2", "3" ],
         "enableNodePublicIP": false,
         "orchestratorVersion": "[parameters('kubernetesVersion')]",
         "nodeLabels": {}
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName'))]"
+        "[resourceId('Microsoft.ContainerService/managedClusters/', variables('aksClusterName'))]"
       ]
     },
     {
@@ -1126,9 +861,9 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/userdata-scripts/cuserdata.sh"
+            "https://raw.githubusercontent.com/vilvamani/boomi-aks/main/userdata-scripts/cuserdata-fileshare.sh"
           ],
-          "commandToExecute": "[concat('./cuserdata.sh', ' --resource_group \"', resourceGroup().name, '\" --aks_name \"', variables('aksClusterName'), '\" --storage_acc_name \"', variables('storageAccountName'), '\" --molecule_username \"', parameters('MoleculeUsername'), '\" --molecule_password \"', parameters('MoleculePassword'), '\" --molecule_account \"', parameters('MoleculeAccountID'), '\" --fileshare \"', variables('fileShareName'), '\"')]"
+          "commandToExecute": "[concat('./cuserdata-fileshare.sh', ' --resource_group \"', resourceGroup().name, '\" --aks_name \"', variables('aksClusterName'), '\" --storage_acc_name \"', variables('storageAccountName'), '\" --molecule_username \"', parameters('MoleculeUsername'), '\" --molecule_password \"', parameters('MoleculePassword'), '\" --molecule_account \"', parameters('MoleculeAccountID'), '\" --fileshare \"', variables('fileShareName'), '\"')]"
         }
       },
       "dependsOn": [
