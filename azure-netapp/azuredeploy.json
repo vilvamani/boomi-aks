@@ -604,14 +604,14 @@
               "unixReadOnly": false,
               "unixReadWrite": true,
               "cifs": false,
-              "nfsv3": true,
-              "nfsv41": false,
+              "nfsv3": false,
+              "nfsv41": true,
               "allowedClients": "[parameters('virtualNetworkAddressPrefix')]"
             }
           ]
         },
         "protocolTypes": [
-          "NFSv3"
+          "NFSv4.1"
         ],
         //"subnetId": "[variables('netAppFileSubnetId')]",
         "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('netAppFileSubnetName'))]",
