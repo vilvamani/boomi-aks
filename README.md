@@ -1,4 +1,4 @@
-# Boomi AKS Quickstart
+# Boomi AKS Quickstart with ARM Template
 
 ## Register the AKS-IngressApplicationGatewayAddon feature
 
