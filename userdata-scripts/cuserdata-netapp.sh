@@ -166,7 +166,12 @@ kubectl apply -f /tmp/persistentvolume.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f /tmp/persistentvolumeclam.yaml --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset.yaml --kubeconfig=/root/.kube/config
+if [ $boomi_auth == "token" ]
+then
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset_token.yaml --kubeconfig=/root/.kube/config
+else
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset_password.yaml --kubeconfig=/root/.kube/config
+fi
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/services.yaml --kubeconfig=/root/.kube/config
 

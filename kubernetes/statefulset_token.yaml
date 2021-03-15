@@ -19,7 +19,7 @@ spec:
       volumes:
         - name: molecule-storage
           persistentVolumeClaim:
-            claimName: azurefile
+            claimName: molecule-storage
         - name: tmpfs
           emptyDir: {}
         - name: cgroup
@@ -31,7 +31,11 @@ spec:
         imagePullPolicy: Always
         name: atom-node
         ports:
-        - containerPort: 9090
+        - name: http
+          containerPort: 9090
+          protocol: TCP
+        - name: https
+          containerPort: 9093
           protocol: TCP
         lifecycle:
           preStop:
@@ -79,7 +83,7 @@ spec:
               - liveness
         env:
         - name: BOOMI_ATOMNAME
-          value: "boomi-molecule-aks"
+          value: "Boomi-AKS"
         - name: ATOM_LOCALHOSTID
           valueFrom:
             fieldRef:
@@ -89,17 +93,14 @@ spec:
             secretKeyRef:
               name: boomi-secret
               key: account
-        - name: BOOMI_USERNAME
+        - name: INSTALL_TOKEN
           valueFrom:
             secretKeyRef:
               name: boomi-secret
-              key: username
-        - name: BOOMI_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: boomi-secret
-              key: password
+              key: token
         - name: BOOMI_CONTAINERNAME
           value: "boomi-molecule-aks"
         - name: INSTALLATION_DIRECTORY
           value: "/mnt/boomi"
+        - name: CONTAINER_PROPERTIES_OVERRIDES
+          value: "com.boomi.deployment.quickstart=True"

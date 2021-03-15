@@ -100,7 +100,7 @@ cat >/tmp/persistentvolume.yaml <<EOF
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: azurefile
+  name: molecule-storage
 spec:
   capacity:
     storage: 100Gi
