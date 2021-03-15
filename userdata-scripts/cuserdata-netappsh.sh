@@ -93,7 +93,7 @@ mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fil
 
 chmod -R 777 ~/$fileshare
 
-if ["$boomi_token" == 'token']
+if ["$boomi_auth" == "token"]
 then
   cat >/tmp/secrets.yaml <<EOF
   ---
