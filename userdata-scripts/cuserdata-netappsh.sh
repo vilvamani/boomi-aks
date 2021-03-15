@@ -13,16 +13,24 @@ do
       aks_name="$1"
       shift
       ;;
-    --molecule_username)
-      molecule_username="$1"
+    --boomi_auth)
+      boomi_auth="$1"
       shift
       ;;
-    --molecule_password)
-      molecule_password="$1"
+    --boomi_token)
+      boomi_token="$1"
       shift
       ;;
-    --molecule_account)
-      molecule_account="$1"
+    --boomi_username)
+      boomi_username="$1"
+      shift
+      ;;
+    --boomi_password)
+      boomi_password="$1"
+      shift
+      ;;
+    --boomi_account)
+      boomi_account="$1"
       shift
       ;;
     --fileshare)
@@ -85,18 +93,33 @@ mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fil
 
 chmod -R 777 ~/$fileshare
 
-cat >/tmp/secrets.yaml <<EOF
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: boomi-secret
-type: Opaque
-stringData:
-  username: $molecule_username
-  password: $molecule_password
-  account: $molecule_account
+if [$boomi_token == 'token']
+then
+  cat >/tmp/secrets.yaml <<EOF
+  ---
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: boomi-secret
+  type: Opaque
+  stringData:
+    token: $boomi_token
+    account: $boomi_account
 EOF
+else
+  cat >/tmp/secrets.yaml <<EOF
+  ---
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: boomi-secret
+  type: Opaque
+  stringData:
+    username: $boomi_username
+    password: $boomi_password
+    account: $boomi_account
+EOF
+fi
 
 cat >/tmp/persistentvolume.yaml <<EOF
 ---
