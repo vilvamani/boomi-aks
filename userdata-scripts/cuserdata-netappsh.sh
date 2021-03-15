@@ -93,31 +93,31 @@ mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fil
 
 chmod -R 777 ~/$fileshare
 
-if ["$boomi_auth" == "token"]
+if [ $boomi_auth == "token" ]
 then
-  cat >/tmp/secrets.yaml <<EOF
-  ---
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: boomi-secret
-  type: Opaque
-  stringData:
-    token: $boomi_token
-    account: $boomi_account
+cat >/tmp/secrets.yaml <<EOF
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: boomi-secret
+type: Opaque
+stringData:
+  token: $boomi_token
+  account: $boomi_account
 EOF
 else
-  cat >/tmp/secrets.yaml <<EOF
-  ---
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: boomi-secret
-  type: Opaque
-  stringData:
-    username: $boomi_username
-    password: $boomi_password
-    account: $boomi_account
+cat >/tmp/secrets.yaml <<EOF
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: boomi-secret
+type: Opaque
+stringData:
+  username: $boomi_username
+  password: $boomi_password
+  account: $boomi_account
 EOF
 fi
 
