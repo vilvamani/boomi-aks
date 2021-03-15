@@ -62,6 +62,9 @@
     "adminPassword": {
       "value": ""
     },
+    "BoomiAuthenticationType": {
+      "value": ""
+    },
     "MoleculeUsername": {
       "value": ""
     },
@@ -69,6 +72,9 @@
       "value": ""
     },
     "MoleculeAccountID": {
+      "value": ""
+    },
+    "BoomiMFAInstallToken": {
       "value": ""
     }
   }
