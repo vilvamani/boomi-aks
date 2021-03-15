@@ -126,7 +126,7 @@ cat >/tmp/persistentvolume.yaml <<EOF
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: azurefile
+  name: molecule-storage
 spec:
   storageClassName: ""
   capacity:
@@ -146,7 +146,7 @@ cat >/tmp/persistentvolumeclam.yaml <<EOF
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: azurefile
+  name: molecule-storage
 spec:
   accessModes:
     - ReadWriteMany
