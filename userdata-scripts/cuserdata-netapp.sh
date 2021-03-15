@@ -156,8 +156,6 @@ spec:
       storage: 100Gi
 EOF
 
-whoami
-
 kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/namespace.yaml --kubeconfig=/root/.kube/config

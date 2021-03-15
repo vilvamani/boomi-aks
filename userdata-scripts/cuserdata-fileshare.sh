@@ -17,16 +17,24 @@ do
       storage_acc_name="$1"
       shift
       ;;
-    --molecule_username)
-      molecule_username="$1"
+    --boomi_auth)
+      boomi_auth="$1"
       shift
       ;;
-    --molecule_password)
-      molecule_password="$1"
+    --boomi_token)
+      boomi_token="$1"
       shift
       ;;
-    --molecule_account)
-      molecule_account="$1"
+    --boomi_username)
+      boomi_username="$1"
+      shift
+      ;;
+    --boomi_password)
+      boomi_password="$1"
+      shift
+      ;;
+    --boomi_account)
+      boomi_account="$1"
       shift
       ;;
     --fileshare)
@@ -82,6 +90,8 @@ az aks get-credentials --resource-group "$resource_group" --name "$aks_name"
 # Get storage account key
 storage_acc_key=$(az storage account keys list --resource-group "$resource_group" --account-name "$storage_acc_name" --query "[0].value" -o tsv)
 
+if [ $boomi_auth == "token" ]
+then
 cat >/tmp/secrets.yaml <<EOF
 ---
 apiVersion: v1
@@ -90,10 +100,23 @@ metadata:
   name: boomi-secret
 type: Opaque
 stringData:
-  username: $molecule_username
-  password: $molecule_password
-  account: $molecule_account
+  token: $boomi_token
+  account: $boomi_account
 EOF
+else
+cat >/tmp/secrets.yaml <<EOF
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: boomi-secret
+type: Opaque
+stringData:
+  username: $boomi_username
+  password: $boomi_password
+  account: $boomi_account
+EOF
+fi
 
 cat >/tmp/persistentvolume.yaml <<EOF
 ---
@@ -120,27 +143,44 @@ spec:
   - nobrl
 EOF
 
-whoami
-
-kubectl get nodes -o wide --kubeconfig=/root/.kube/config
-
-kubectl create secret generic azure-secret --from-literal=azurestorageaccountname="$storage_acc_name" --from-literal=azurestorageaccountkey="$storage_acc_key"  --kubeconfig=/root/.kube/config
+cat >/tmp/persistentvolumeclam.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: molecule-storage
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "azurefile"
+  resources:
+    requests:
+      storage: 100Gi
+EOF
 
 kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
 
-kubectl apply -f /tmp/persistentvolume.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/namespace.yaml --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/persistent_volume_claim.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f /tmp/secrets.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
-kubectl apply -f /tmp/secrets.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f /tmp/persistentvolume.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f /tmp/persistentvolumeclam.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/services.yaml --kubeconfig=/root/.kube/config
+if [ $boomi_auth == "token" ]
+then
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset_token.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+else
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset_password.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+fi
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/services.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
 rm /tmp/secrets.yaml
 rm /tmp/persistentvolume.yaml
+rm /tmp/persistentvolumeclam.yaml
