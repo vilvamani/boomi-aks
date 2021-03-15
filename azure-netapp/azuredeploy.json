@@ -719,7 +719,6 @@
         }
       },
       "dependsOn": [
-        "[concat('Microsoft.Resources/deploymentScripts/', 'enableAKSAGIC')]",
         "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
         "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('aksUserIdentityName'))]",
         "[resourceId('Microsoft.NetApp/netAppAccounts/capacityPools/volumes', variables('netAppAccountName'), variables('netAppPoolName'), variables('netAppVolumeName'))]"
