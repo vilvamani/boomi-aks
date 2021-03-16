@@ -132,7 +132,7 @@ spec:
   storageClassName: "azurefile"
   azureFile:
     secretName: azure-secret
-    SecretNamespace: aks-boomi-molecule
+    secretNamespace: aks-boomi-molecule
     shareName: $fileshare
     readOnly: false
   mountOptions:
