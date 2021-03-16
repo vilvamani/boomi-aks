@@ -132,6 +132,7 @@ spec:
   storageClassName: "azurefile"
   azureFile:
     secretName: azure-secret
+    SecretNamespace: aks-boomi-molecule
     shareName: $fileshare
     readOnly: false
   mountOptions:
@@ -161,6 +162,8 @@ EOF
 kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/namespace.yaml --kubeconfig=/root/.kube/config
+
+kubectl create secret generic azure-secret --from-literal=azurestorageaccountname="$storage_acc_name" --from-literal=azurestorageaccountkey="$storage_acc_key" --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
 kubectl apply -f /tmp/secrets.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
